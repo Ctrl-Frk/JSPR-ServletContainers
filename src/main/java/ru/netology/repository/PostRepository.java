@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 // Stub
 public class PostRepository {
+    private static final String POST_NOT_FOUND = "Post with id(%d) not found";
     private final ConcurrentHashMap<Long, Post> posts = new ConcurrentHashMap<>();
     private final AtomicLong postId = new AtomicLong();
 
@@ -22,16 +23,16 @@ public class PostRepository {
 
     public Post save(Post post) {
         Post savingPost;
-        int id = (int) post.getId();
+        long id = post.getId();
         if (post.getId() == 0) {
             postId.incrementAndGet();
             savingPost = new Post(postId.get(), post.getContent());
             posts.put(postId.get(), savingPost);
         } else if (posts.containsKey(id)) {
             savingPost = new Post(id, post.getContent());
-            posts.replace((long) id, post);
+            posts.replace(id, post);
         } else {
-            throw new NotFoundException("Post with id(" + id + ") not found");
+            throw new NotFoundException(String.format(POST_NOT_FOUND, id));
         }
         return savingPost;
     }
@@ -40,7 +41,7 @@ public class PostRepository {
         if (posts.containsKey(id)) {
             posts.remove(id);
         } else {
-            throw new NotFoundException("Post with id(" + id + ") not found");
+            throw new NotFoundException(String.format(POST_NOT_FOUND, id));
         }
     }
 }

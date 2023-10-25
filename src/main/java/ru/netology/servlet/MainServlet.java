@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class MainServlet extends HttpServlet {
+  private static final String API_POSTS = "/api/posts";
+  private static final String API_POSTS_NUMBER = "/api/posts/\\d";
   private PostController controller;
 
   @Override
@@ -25,21 +27,21 @@ public class MainServlet extends HttpServlet {
       final var path = req.getRequestURI();
       final var method = req.getMethod();
       // primitive routing
-      if (method.equals("GET") && path.equals("/api/posts")) {
+      if (method.equals("GET") && path.equals(API_POSTS)) {
         controller.all(resp);
         return;
       }
-      if (method.equals("GET") && path.matches("/api/posts/\\d+")) {
+      if (method.equals("GET") && path.matches(API_POSTS_NUMBER)) {
         // easy way
         final var id = Long.parseLong(path.substring(path.lastIndexOf("/") + 1));
         controller.getById(id, resp);
         return;
       }
-      if (method.equals("POST") && path.equals("/api/posts")) {
+      if (method.equals("POST") && path.equals(API_POSTS)) {
         controller.save(req.getReader(), resp);
         return;
       }
-      if (method.equals("DELETE") && path.matches("/api/posts/\\d+")) {
+      if (method.equals("DELETE") && path.matches(API_POSTS_NUMBER)) {
         // easy way
         final var id = Long.parseLong(path.substring(path.lastIndexOf("/") + 1));
         controller.removeById(id, resp);
